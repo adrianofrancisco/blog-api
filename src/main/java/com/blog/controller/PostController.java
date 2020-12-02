@@ -2,6 +2,7 @@ package com.blog.controller;
 
 import com.blog.entity.Post;
 import com.blog.repository.PostRepository;
+import com.blog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
@@ -14,24 +15,22 @@ import java.util.Optional;
 public class PostController {
 
     @Autowired
-    PostRepository postRepository;
+    PostService postService;
 
     @PostMapping("/api/post")
     public ResponseEntity<Post> save(@RequestBody Post post) {
-        return ResponseEntity.ok().body(postRepository.save(post));
+        return ResponseEntity.ok().body(postService.save(post));
     }
 
     @GetMapping("/api/posts")
     public ResponseEntity<?> findAll() {
-        return ResponseEntity.ok(postRepository.findAll());
+        return ResponseEntity.ok(postService.findAll());
     }
 
     @PutMapping("/api/post/{requestId}")
     public ResponseEntity<?> incrementUpVote(@PathVariable Integer requestId) {
-        Optional<Post> post = postRepository.findById(requestId);
+        Post post = postService.incrementUpVote(requestId);
 
-        post.get().setCountUpvote(post.get().getCountUpvote() + 1);
-
-        return ResponseEntity.ok().body(postRepository.save(post.get()));
+        return ResponseEntity.ok().body(post);
     }
 }
